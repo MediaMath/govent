@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 //Event to record in graphite
@@ -28,7 +28,7 @@ func NewEvent(what string, data string, tags ...string) *Event {
 
 //New creates a new graphite client
 func New(username, password, addr string) *Graphite {
-	return &Graphite{username, password, addr, &http.Client{}}
+	return &Graphite{username, password, addr, &http.Client{Timeout: time.Duration(10) * time.Second}}
 }
 
 //Graphite is a wrapper around the graphite events API
@@ -36,7 +36,7 @@ type Graphite struct {
 	username string
 	password string
 	addr     string
-	client   *http.Client
+	Client   *http.Client
 }
 
 //Publish sends the event to the graphite API
@@ -56,19 +56,22 @@ func (g *Graphite) Publish(event *Event) error {
 		req.SetBasicAuth(g.username, g.password)
 	}
 
-	resp, err := g.client.Do(req)
+	resp, err := g.Client.Do(req)
 
 	if err != nil {
 		return err
 	}
 
-	if resp.Body != nil {
-		io.Copy(ioutil.Discard, resp.Body)
-		resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	if err != nil {
+		return err
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("error response code:%v", resp.StatusCode)
+		return fmt.Errorf("%v:%s", resp.StatusCode, body)
 	}
+
 	return nil
 }

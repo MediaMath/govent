@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -16,11 +17,6 @@ var (
 		EnvVar: "GEVENT_WHAT",
 	}
 
-	dataFlag = cli.StringFlag{
-		Name:  "data",
-		Usage: "The 'Data' field in the event.",
-	}
-
 	tagsFlag = cli.StringSliceFlag{
 		Name:   "tag",
 		Usage:  "The 'Tag' field in the event.",
@@ -32,15 +28,12 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "gevent"
 	app.Usage = "send events to the graphite api"
-	app.Flags = append(cligraphite.Flags, whatFlag, dataFlag, tagsFlag)
+	app.Flags = append(cligraphite.Flags, whatFlag, tagsFlag)
 
 	app.Action = func(ctx *cli.Context) {
-		what := ctx.String(whatFlag.Name)
-		data := ctx.String(dataFlag.Name)
-		tags := ctx.StringSlice(tagsFlag.Name)
-
-		if what == "" || data == "" {
-			log.Fatalf("%s and %s are required.", whatFlag.Name, dataFlag.Name)
+		event, err := eventFromCtx(ctx)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 		client, err := cligraphite.NewClientFromContext(ctx)
@@ -48,11 +41,27 @@ func main() {
 			log.Fatal(err)
 		}
 
-		err = client.Publish(graphite.NewEvent(what, data, tags...))
+		err = client.Publish(event)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
 	app.Run(os.Args)
+}
+
+func eventFromCtx(ctx *cli.Context) (*graphite.Event, error) {
+	what := ctx.String(whatFlag.Name)
+	if what == "" {
+		return nil, fmt.Errorf("%s is required.", whatFlag.Name)
+	}
+
+	if len(ctx.Args()) != 1 {
+		return nil, fmt.Errorf("Must provide data to post")
+	}
+	data := ctx.Args()[0]
+
+	tags := ctx.StringSlice(tagsFlag.Name)
+
+	return graphite.NewEvent(what, data, tags...), nil
 }
