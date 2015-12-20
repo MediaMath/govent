@@ -74,7 +74,7 @@ func (g *Graphite) Publish(event *Event) error {
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("%v:%s", resp.StatusCode, body)
+		return fmt.Errorf("%v:%v:%s", g.addr, resp.StatusCode, body)
 	}
 
 	return nil

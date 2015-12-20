@@ -57,7 +57,7 @@ func main() {
 func eventFromCtx(ctx *cli.Context) (*graphite.Event, error) {
 	what := ctx.String(whatFlag.Name)
 	if what == "" {
-		return nil, fmt.Errorf("%s is required.", whatFlag.Name)
+		return nil, fmt.Errorf("%s is required", whatFlag.Name)
 	}
 
 	if len(ctx.Args()) != 1 {
