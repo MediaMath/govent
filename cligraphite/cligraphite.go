@@ -7,7 +7,7 @@ package cligraphite
 import (
 	"fmt"
 
-	"github.com/MediaMath/gevent/graphite"
+	"github.com/MediaMath/govent/graphite"
 	"github.com/codegangsta/cli"
 )
 

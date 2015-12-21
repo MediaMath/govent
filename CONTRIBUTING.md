@@ -1,5 +1,5 @@
 # License
-By contributing you agree that your contributions will be licensed under the gevent project [license](LICENSE).
+By contributing you agree that your contributions will be licensed under the govent project [license](LICENSE).
 
 # Code Style
 

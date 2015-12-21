@@ -9,8 +9,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/MediaMath/gevent/cligraphite"
-	"github.com/MediaMath/gevent/graphite"
+	"github.com/MediaMath/govent/cligraphite"
+	"github.com/MediaMath/govent/graphite"
 	"github.com/codegangsta/cli"
 )
 
@@ -18,19 +18,19 @@ var (
 	whatFlag = cli.StringFlag{
 		Name:   "what",
 		Usage:  "The 'What' field in the event.",
-		EnvVar: "GEVENT_WHAT",
+		EnvVar: "GOVENT_WHAT",
 	}
 
 	tagsFlag = cli.StringSliceFlag{
 		Name:   "tag",
 		Usage:  "The 'Tag' field in the event.",
-		EnvVar: "GEVENT_TAGS",
+		EnvVar: "GOVENT_TAGS",
 	}
 )
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "gevent"
+	app.Name = "govent"
 	app.Usage = "send events to the graphite api"
 	app.Flags = append(cligraphite.Flags, whatFlag, tagsFlag)
 
