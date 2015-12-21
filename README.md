@@ -4,16 +4,16 @@
 To install:
 
 ```bash
-go install github.com/MediaMath/govent
+$ go install github.com/MediaMath/govent
 ```
 
 To use:
 
 ```bash
-export GRAPHITE_URL=https://example.com/events/ 
-export GRAPHITE_USER=foo 
-export GRAPHITE_PASSWORD=bar 
-govent --tag go.write.me.an.event.build --what what.aint.no.country "my data is fo realz"
+$ export GRAPHITE_URL=https://example.com/events/ 
+$ export GRAPHITE_USER=foo 
+$ export GRAPHITE_PASSWORD=bar 
+$ govent --tag go.write.me.an.event.build --what what.aint.no.country "my data is fo realz"
 ```
 
 #### Go library
@@ -21,7 +21,7 @@ govent --tag go.write.me.an.event.build --what what.aint.no.country "my data is 
 To get:
 
 ```bash
-go get github.com/MediaMath/govent/graphite
+$ go get github.com/MediaMath/govent/graphite
 ```
 
 To use:
