@@ -19,12 +19,12 @@ type Event struct {
 	What string `json:"what"`
 	Tags string `json:"tags"`
 	Data string `json:"data"`
-	When string `json:"when,omitempty"`
+	When int64  `json:"when,omitempty"`
 }
 
 //At will set the When field with the appropriately formatted time
 func (e *Event) At(t time.Time) *Event {
-	e.When = fmt.Sprintf("%v", t.UTC().Unix())
+	e.When = t.UTC().Unix()
 	return e
 }
 
@@ -90,7 +90,7 @@ func (g *Graphite) Publish(event *Event) error {
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("%v:%v:%s", g.addr, resp.StatusCode, body)
+		return fmt.Errorf("%v:%v:%s:%s", g.addr, resp.StatusCode, body, b)
 	}
 
 	return nil

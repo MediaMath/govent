@@ -8,10 +8,38 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
+	"time"
 )
+
+func TestIntegrate(t *testing.T) {
+	username := os.Getenv("GRAPHITE_USER")
+	password := os.Getenv("GRAPHITE_PASSWORD")
+	url := os.Getenv("GRAPHITE_URL")
+
+	if testing.Short() {
+		t.Skipf("skipped because is an integration test")
+	}
+
+	if username == "" || password == "" || url == "" {
+		t.Skipf("skipped because missing creds")
+	}
+
+	now := time.Now()
+	event := NewTaggedEvent("com.mediamath.govent.test", "boom")
+	event.At(now)
+
+	graphite := New(username, password, url)
+
+	err := graphite.Publish(event)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func TestGraphiteTagEvent(t *testing.T) {
 	event := NewTaggedEvent("foo.bar", "data biz")
