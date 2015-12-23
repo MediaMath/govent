@@ -22,6 +22,12 @@ type Event struct {
 	When string `json:"when,omitempty"`
 }
 
+//At will set the When field with the appropriately formatted time
+func (e *Event) At(t time.Time) *Event {
+	e.When = fmt.Sprintf("%v", t.UTC().Unix())
+	return e
+}
+
 //NewEvent creates an event with the provided data
 func NewEvent(what string, data string, tags ...string) *Event {
 	return &Event{
