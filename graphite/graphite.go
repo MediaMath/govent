@@ -19,6 +19,7 @@ type Event struct {
 	What string `json:"what"`
 	Tags string `json:"tags"`
 	Data string `json:"data"`
+	When string `json:"when,omitempty"`
 }
 
 //NewEvent creates an event with the provided data
@@ -26,6 +27,15 @@ func NewEvent(what string, data string, tags ...string) *Event {
 	return &Event{
 		What: what,
 		Tags: strings.Join(tags, ","),
+		Data: data,
+	}
+}
+
+//NewTaggedEvent creates an event with 1 tag and the what is the same as the tag
+func NewTaggedEvent(tag string, data string) *Event {
+	return &Event{
+		What: tag,
+		Tags: tag,
 		Data: data,
 	}
 }

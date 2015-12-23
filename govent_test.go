@@ -13,7 +13,8 @@ import (
 
 func TestWhatRequired(t *testing.T) {
 	set := flag.NewFlagSet("test", 0)
-	set.String("tags", "fo", "")
+	s := cli.StringSlice([]string{"fo", "sho"})
+	set.Var(&s, "tag", "boom")
 	ctx := cli.NewContext(nil, set, nil)
 	set.Parse([]string{"data"})
 
@@ -32,7 +33,8 @@ func TestWhatRequired(t *testing.T) {
 
 func TestDataRequired(t *testing.T) {
 	set := flag.NewFlagSet("test", 0)
-	set.String("tags", "fo", "")
+	s := cli.StringSlice([]string{"fo", "sho"})
+	set.Var(&s, "tag", "boom")
 	set.String("what", "it", "is")
 
 	ctx := cli.NewContext(nil, set, nil)
@@ -50,9 +52,29 @@ func TestDataRequired(t *testing.T) {
 	}
 }
 
+func TestEventUsesTagIfOnlyOneTagDefinedAndNoWhat(t *testing.T) {
+	set := flag.NewFlagSet("test", 0)
+	s := cli.StringSlice([]string{"fo"})
+	set.Var(&s, "tag", "boom")
+	set.Parse([]string{"data"})
+
+	ctx := cli.NewContext(nil, set, nil)
+
+	event, err := eventFromCtx(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if event.What != "fo" && event.Tags != "fo" && event.Data != "data" {
+		t.Fatalf("%v", event)
+	}
+
+}
+
 func TestEventFromCtx(t *testing.T) {
 	set := flag.NewFlagSet("test", 0)
-	set.String("tags", "fo", "")
+	s := cli.StringSlice([]string{"fo", "sho"})
+	set.Var(&s, "tag", "boom")
 	set.String("what", "it", "is")
 	set.Parse([]string{"data"})
 

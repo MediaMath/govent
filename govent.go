@@ -55,17 +55,23 @@ func main() {
 }
 
 func eventFromCtx(ctx *cli.Context) (*graphite.Event, error) {
+	tags := ctx.StringSlice(tagsFlag.Name)
+	log.Printf("%v", tags)
+	if len(tags) < 1 {
+		return nil, fmt.Errorf("%s is required", tagsFlag.Name)
+	}
+
 	what := ctx.String(whatFlag.Name)
-	if what == "" {
-		return nil, fmt.Errorf("%s is required", whatFlag.Name)
+	if len(tags) != 1 && what == "" {
+		return nil, fmt.Errorf("%s is required if multiple tags are used", whatFlag.Name)
+	} else if what == "" {
+		what = tags[0]
 	}
 
 	if len(ctx.Args()) != 1 {
 		return nil, fmt.Errorf("Must provide data to post")
 	}
 	data := ctx.Args()[0]
-
-	tags := ctx.StringSlice(tagsFlag.Name)
 
 	return graphite.NewEvent(what, data, tags...), nil
 }

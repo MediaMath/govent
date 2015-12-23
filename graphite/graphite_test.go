@@ -13,6 +13,21 @@ import (
 	"testing"
 )
 
+func TestGraphiteTagEvent(t *testing.T) {
+	event := NewTaggedEvent("foo.bar", "data biz")
+	if event.Data != "data biz" {
+		t.Errorf("Data wrong: %v", event)
+	}
+
+	if event.Tags != "foo.bar" {
+		t.Errorf("Tags wrong: %v", event)
+	}
+
+	if event.What != "foo.bar" {
+		t.Errorf("What wrong: %v", event)
+	}
+}
+
 func TestGraphiteComesWithTimeOut(t *testing.T) {
 	graphite := New("", "", "example.com")
 	if graphite.Client.Timeout == 0 {
