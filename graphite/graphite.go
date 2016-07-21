@@ -48,7 +48,12 @@ func NewTaggedEvent(tag string, data string) *Event {
 
 //New creates a new graphite client
 func New(username, password, addr string) *Graphite {
-	return &Graphite{username, password, addr, &http.Client{Timeout: time.Duration(10) * time.Second}}
+	return NewVerbose(username, password, addr, true)
+}
+
+//NewVerbose creates a new client with verbosity set
+func NewVerbose(username, password, addr string, verbose bool) *Graphite {
+	return &Graphite{username, password, addr, &http.Client{Timeout: time.Duration(10) * time.Second}, verbose}
 }
 
 //Graphite is a wrapper around the graphite events API
@@ -57,6 +62,7 @@ type Graphite struct {
 	password string
 	addr     string
 	Client   *http.Client
+	verbose  bool
 }
 
 //Publish sends the event to the graphite API
@@ -90,7 +96,11 @@ func (g *Graphite) Publish(event *Event) error {
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("%v:%v:%s:%s", g.addr, resp.StatusCode, body, b)
+		if g.verbose {
+			return fmt.Errorf("%v:%v:%s:%s", g.addr, resp.StatusCode, body, b)
+		}
+
+		return fmt.Errorf("%v:%v:%s", g.addr, resp.StatusCode, b)
 	}
 
 	return nil
