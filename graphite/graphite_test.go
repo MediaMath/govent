@@ -39,6 +39,23 @@ func TestIntegrate(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	graphite2 := &Graphite{
+		Username: username,
+		Password: password,
+		Verbose:  false,
+		Prefix:   "com.mediamath.govent",
+		Addr:     url,
+		Client:   &http.Client{Timeout: time.Second * 10},
+	}
+
+	event = NewTaggedEvent("test2", "boom")
+	event.At(now)
+
+	err = graphite2.Publish(event)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func TestGraphiteTagEvent(t *testing.T) {
@@ -53,13 +70,6 @@ func TestGraphiteTagEvent(t *testing.T) {
 
 	if event.What != "foo.bar" {
 		t.Errorf("What wrong: %v", event)
-	}
-}
-
-func TestGraphiteComesWithTimeOut(t *testing.T) {
-	graphite := New("", "", "example.com")
-	if graphite.Client.Timeout == 0 {
-		t.Fatal("Needs to have a default timeout")
 	}
 }
 

@@ -53,33 +53,46 @@ func New(username, password, addr string) *Graphite {
 
 //NewVerbose creates a new client with verbosity set
 func NewVerbose(username, password, addr string, verbose bool) *Graphite {
-	return &Graphite{username, password, addr, &http.Client{Timeout: time.Duration(10) * time.Second}, verbose}
+	return &Graphite{
+		Username: username,
+		Password: password,
+		Addr:     addr,
+		Client:   &http.Client{Timeout: time.Duration(10) * time.Second},
+		Verbose:  verbose,
+		Prefix:   "",
+	}
 }
 
 //Graphite is a wrapper around the graphite events API
 type Graphite struct {
-	username string
-	password string
-	addr     string
-	Client   *http.Client
-	verbose  bool
+	Username string
+	Password string
+	Addr     string
+	Client   HTTPClient
+	Verbose  bool
+	Prefix   string
 }
 
 //Publish sends the event to the graphite API
 func (g *Graphite) Publish(event *Event) error {
+	if g.Prefix != "" {
+		event.What = fmt.Sprintf("%v.%v", g.Prefix, event.What)
+		event.Tags = fmt.Sprintf("%v.%v", g.Prefix, event.Tags)
+	}
+
 	b, err := json.Marshal(event)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", g.addr, bytes.NewBuffer(b))
+	req, err := http.NewRequest("POST", g.Addr, bytes.NewBuffer(b))
 
 	if err != nil {
 		return err
 	}
 
-	if g.username != "" && g.password != "" {
-		req.SetBasicAuth(g.username, g.password)
+	if g.Username != "" && g.Password != "" {
+		req.SetBasicAuth(g.Username, g.Password)
 	}
 
 	resp, err := g.Client.Do(req)
@@ -96,12 +109,17 @@ func (g *Graphite) Publish(event *Event) error {
 	}
 
 	if resp.StatusCode != 200 {
-		if g.verbose {
-			return fmt.Errorf("%v:%v:%s:%s", g.addr, resp.StatusCode, body, b)
+		if g.Verbose {
+			return fmt.Errorf("%v:%v:%s:%s", g.Addr, resp.StatusCode, body, b)
 		}
 
-		return fmt.Errorf("%v:%v:%s", g.addr, resp.StatusCode, b)
+		return fmt.Errorf("%v:%v:%s", g.Addr, resp.StatusCode, b)
 	}
 
 	return nil
+}
+
+//HTTPClient is any client that can do a http request
+type HTTPClient interface {
+	Do(request *http.Request) (*http.Response, error)
 }
