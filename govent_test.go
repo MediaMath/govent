@@ -65,7 +65,7 @@ func TestEventUsesTagIfOnlyOneTagDefinedAndNoWhat(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if event.What != "fo" && event.Tags != "fo" && event.Data != "data" {
+	if event.What != "fo" && event.Tags[0] != "fo" && event.Data != "data" {
 		t.Fatalf("%v", event)
 	}
 
@@ -85,7 +85,7 @@ func TestEventFromCtx(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if event.What != "it" && event.Tags != "fo" && event.Data != "data" {
+	if event.What != "it" && event.Tags[0] != "fo" && event.Data != "data" {
 		t.Fatalf("%v", event)
 	}
 

@@ -10,16 +10,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 )
 
 //Event to record in graphite
 type Event struct {
-	What string `json:"what"`
-	Tags string `json:"tags"`
-	Data string `json:"data"`
-	When int64  `json:"when,omitempty"`
+	What string   `json:"what"`
+	Tags []string `json:"tags"`
+	Data string   `json:"data"`
+	When int64    `json:"when,omitempty"`
 }
 
 //At will set the When field with the appropriately formatted time
@@ -32,7 +31,7 @@ func (e *Event) At(t time.Time) *Event {
 func NewEvent(what string, data string, tags ...string) *Event {
 	return &Event{
 		What: what,
-		Tags: strings.Join(tags, ","),
+		Tags: tags,
 		Data: data,
 	}
 }
@@ -41,7 +40,7 @@ func NewEvent(what string, data string, tags ...string) *Event {
 func NewTaggedEvent(tag string, data string) *Event {
 	return &Event{
 		What: tag,
-		Tags: tag,
+		Tags: []string{tag},
 		Data: data,
 	}
 }
@@ -77,7 +76,12 @@ type Graphite struct {
 func (g *Graphite) Publish(event *Event) error {
 	if g.Prefix != "" {
 		event.What = fmt.Sprintf("%v.%v", g.Prefix, event.What)
-		event.Tags = fmt.Sprintf("%v.%v", g.Prefix, event.Tags)
+
+		var prefixed []string
+		for _, tag := range event.Tags {
+			prefixed = append(prefixed, fmt.Sprintf("%v.%v", g.Prefix, tag))
+		}
+		event.Tags = prefixed
 	}
 
 	b, err := json.Marshal(event)

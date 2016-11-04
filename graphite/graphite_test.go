@@ -64,7 +64,7 @@ func TestGraphiteTagEvent(t *testing.T) {
 		t.Errorf("Data wrong: %v", event)
 	}
 
-	if event.Tags != "foo.bar" {
+	if event.Tags[0] != "foo.bar" {
 		t.Errorf("Tags wrong: %v", event)
 	}
 
@@ -129,7 +129,7 @@ func TestGraphiteSendsEvents(t *testing.T) {
 		}
 
 		if err == nil {
-			if event.What != "What" && event.Data != "Dat" && event.Tags != "tag1,tag2" {
+			if event.What != "What" && event.Data != "Dat" && event.Tags[0] != "tag1" && event.Tags[0] != "tag2" {
 				http.Error(w, fmt.Sprintf("%s", body), 529)
 				return
 			}
