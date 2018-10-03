@@ -11,7 +11,7 @@ import (
 
 	"github.com/MediaMath/govent/cligraphite"
 	"github.com/MediaMath/govent/graphite"
-	"github.com/codegangsta/cli"
+	"gopkg.in/urfave/cli.v1"
 )
 
 var (

@@ -1,3 +1,5 @@
+# [govent](https://github.com/MediaMath/govent) &middot; [![CircleCI Status](https://circleci.com/gh/MediaMath/govent.svg?style=shield)](https://circleci.com/gh/MediaMath/govent) [![GitHub license](https://img.shields.io/badge/license-BSD3-blue.svg)](https://github.com/MediaMath/govent/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/MediaMath/govent/blob/master/CONTRIBUTING.md)
+
 ### govent - cli and library for sending events to the graphite events api
 
 #### Command line utility

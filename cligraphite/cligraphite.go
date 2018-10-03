@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"github.com/MediaMath/govent/graphite"
-	"github.com/codegangsta/cli"
+	"gopkg.in/urfave/cli.v1"
 )
 
 //UserFlag has the username for http authenticated graphite apis
