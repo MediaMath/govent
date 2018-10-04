@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/MediaMath/govent/graphite"
-	"github.com/codegangsta/cli"
+	"gopkg.in/urfave/cli.v1"
 )
 
 func TestURLRequired(t *testing.T) {
